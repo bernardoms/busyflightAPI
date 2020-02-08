@@ -27,7 +27,7 @@ public class CrazyAirService implements FlightSupplier <CrazyAirRequest, CrazyAi
         crazyAirRequest.setDepartureDate(flightsRequest.getDepartureDate());
         crazyAirRequest.setReturnDate(flightsRequest.getReturnDate());
         crazyAirRequest.setDestination(flightsRequest.getDestination());
-        crazyAirRequest.setOrigin(flightsRequest.getDestination());
+        crazyAirRequest.setOrigin(flightsRequest.getOrigin());
         crazyAirRequest.setPassengerCount(flightsRequest.getNumberOfPassengers());
 
         return crazyAirRequest;
