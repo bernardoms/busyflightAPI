@@ -20,14 +20,14 @@ import java.util.List;
 @Service
 public class ToughJetService implements FlightSupplier<ToughJetRequest, ToughJetResponse> {
 
-    @Value("${toughJet.server}")
     private String toughJetServer;
 
     private RestTemplate restTemplate;
 
     @Autowired
-    public ToughJetService(RestTemplate restTemplate) {
+    public ToughJetService(RestTemplate restTemplate,  @Value("${toughJet.server}") String toughJetServer) {
         this.restTemplate = restTemplate;
+        this.toughJetServer = toughJetServer;
     }
 
     @Override
@@ -67,13 +67,14 @@ public class ToughJetService implements FlightSupplier<ToughJetRequest, ToughJet
         return busyFlightsResponse;
     }
 
-    private String buildUri(ToughJetRequest toughJetRequest){
+    @Override
+    public String buildUri(ToughJetRequest toughJetRequest) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(toughJetServer);
-        builder.queryParam("from",toughJetRequest.getFrom());
-        builder.queryParam("to",toughJetRequest.getTo());
-        builder.queryParam("outboundDate",toughJetRequest.getOutboundDate());
-        builder.queryParam("inboundDate",toughJetRequest.getInboundDate());
-        builder.queryParam("numberOfAdults",toughJetRequest.getNumberOfAdults());
+        builder.queryParam("from", toughJetRequest.getFrom());
+        builder.queryParam("to", toughJetRequest.getTo());
+        builder.queryParam("outboundDate", toughJetRequest.getOutboundDate());
+        builder.queryParam("inboundDate", toughJetRequest.getInboundDate());
+        builder.queryParam("numberOfAdults", toughJetRequest.getNumberOfAdults());
         return builder.toUriString();
     }
 }

@@ -6,18 +6,32 @@ import com.travix.medusa.busyflights.domain.busyflights.BusyFlightsResponse;
 import com.travix.medusa.busyflights.domain.toughjet.ToughJetRequest;
 import com.travix.medusa.busyflights.domain.toughjet.ToughJetResponse;
 import com.travix.medusa.busyflights.service.ToughJetService;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.web.client.RestTemplate;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ToughJetServiceTest {
 
-    @InjectMocks
+    @Mock
+    private RestTemplate restTemplate;
+
     private ToughJetService toughJetService;
+
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+        String toughJetServer = "http://localhost/toughJet/flights";
+        toughJetService = new ToughJetService(restTemplate, toughJetServer);
+    }
 
     @Test
     public void mapToCrazyAirRequest() {
@@ -39,15 +53,7 @@ public class ToughJetServiceTest {
 
     @Test
     public void mapToBusyFlightResponse() {
-        ToughJetResponse toughJetResponse = new ToughJetResponse();
-        toughJetResponse.setCarrier("LATAM");
-        toughJetResponse.setInboundDateTime("2020-02-18T01:00:00+01:00");
-        toughJetResponse.setOutboundDateTime("2020-02-19T01:00:00+01:00");
-        toughJetResponse.setDepartureAirportName("GIG");
-        toughJetResponse.setArrivalAirportName("LCY");
-        toughJetResponse.setBasePrice(500);
-        toughJetResponse.setDiscount(10);
-        toughJetResponse.setTax(15);
+        ToughJetResponse toughJetResponse = generateToughJetResponse();
 
         BusyFlightsResponse response = toughJetService.map(toughJetResponse);
 
@@ -59,4 +65,45 @@ public class ToughJetServiceTest {
         assertEquals(response.getSupplier(), SuplierEnum.ToughJet.name());
     }
 
+    @Test
+    public void mountURLForSupplier() {
+        ToughJetRequest toughJetRequest = generateToughJetRequest();
+
+        assertEquals(toughJetService.buildUri(toughJetRequest), "http://localhost/toughJet/flights?from=GIG&to=LCY&outboundDate=2020-02-19T01:00:00%2B01:00&inboundDate=2020-02-19T01:00:00%2B01:00&numberOfAdults=4");
+    }
+
+    @Test
+    public void searchSupplier() {
+
+        ToughJetResponse[] toughJetResponses = {generateToughJetResponse()};
+
+        when(restTemplate.getForObject(anyString(), eq(ToughJetResponse[].class))).thenReturn(toughJetResponses);
+
+        toughJetService.supplierSearch(generateToughJetRequest());
+    }
+
+    public ToughJetRequest generateToughJetRequest() {
+        ToughJetRequest toughJetRequest = new ToughJetRequest();
+        toughJetRequest.setFrom("GIG");
+        toughJetRequest.setOutboundDate("2020-02-19T01:00:00+01:00");
+        toughJetRequest.setInboundDate("2020-02-19T01:00:00+01:00");
+        toughJetRequest.setTo("LCY");
+        toughJetRequest.setNumberOfAdults(4);
+
+        return toughJetRequest;
+    }
+
+    public ToughJetResponse generateToughJetResponse() {
+        ToughJetResponse toughJetResponse = new ToughJetResponse();
+        toughJetResponse.setCarrier("LATAM");
+        toughJetResponse.setInboundDateTime("2020-02-18T01:00:00+01:00");
+        toughJetResponse.setOutboundDateTime("2020-02-19T01:00:00+01:00");
+        toughJetResponse.setDepartureAirportName("GIG");
+        toughJetResponse.setArrivalAirportName("LCY");
+        toughJetResponse.setBasePrice(500);
+        toughJetResponse.setDiscount(10);
+        toughJetResponse.setTax(15);
+
+        return toughJetResponse;
+    }
 }

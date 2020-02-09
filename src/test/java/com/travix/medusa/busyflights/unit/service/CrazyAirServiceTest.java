@@ -6,17 +6,33 @@ import com.travix.medusa.busyflights.domain.busyflights.BusyFlightsResponse;
 import com.travix.medusa.busyflights.domain.crazyair.CrazyAirRequest;
 import com.travix.medusa.busyflights.domain.crazyair.CrazyAirResponse;
 import com.travix.medusa.busyflights.service.CrazyAirService;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.web.client.RestTemplate;
+
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CrazyAirServiceTest {
 
-    @InjectMocks
+    @Mock
+    private RestTemplate restTemplate;
+
     private CrazyAirService crazyAirService;
+
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+        String crazyAirServer = "http://localhost/crazyAir/flights";
+        crazyAirService = new CrazyAirService(restTemplate, crazyAirServer);
+    }
 
     @Test
     public void mapToCrazyAirRequest() {
@@ -38,6 +54,43 @@ public class CrazyAirServiceTest {
 
     @Test
     public void mapToBusyFlightResponse() {
+        CrazyAirResponse crazyAirResponse = generateCrazyAirResponse();
+
+        BusyFlightsResponse response = crazyAirService.map(crazyAirResponse);
+        assertEquals(response.getArrivalDate(), "2020-02-18T01:00:00+01:00");
+        assertEquals(response.getDepartureDate(), "2020-02-19T01:00:00+01:00");
+        assertEquals(response.getFare().intValue(), 120);
+        assertEquals(response.getDepartureAirportCode(), "GIG");
+        assertEquals(response.getDestinationAirportCode(), "LCY");
+        assertEquals(response.getSupplier(), SuplierEnum.CrazyAir.name());
+    }
+
+    @Test
+    public void mountURLForSupplier() {
+        assertEquals(crazyAirService.buildUri(generateCrazyAirRequest()), "http://localhost/crazyAir/flights?origin=GIG&destination=LCY&departureDate&returnDate=2020-02-19T01:00:00%2B01:00&passengerCount=4");
+    }
+
+    @Test
+    public void searchSupplier() {
+        CrazyAirResponse[] crazyAirResponses = {generateCrazyAirResponse()};
+
+        when(restTemplate.getForObject(anyString(), eq(CrazyAirResponse[].class))).thenReturn(crazyAirResponses);
+
+        crazyAirService.supplierSearch(generateCrazyAirRequest());
+    }
+
+    public CrazyAirRequest generateCrazyAirRequest() {
+        CrazyAirRequest crazyAirRequest = new CrazyAirRequest();
+        crazyAirRequest.setOrigin("GIG");
+        crazyAirRequest.setReturnDate("2020-02-19T01:00:00+01:00");
+        crazyAirRequest.setDestination("2020-02-19T01:00:00+01:00");
+        crazyAirRequest.setDestination("LCY");
+        crazyAirRequest.setPassengerCount(4);
+
+        return crazyAirRequest;
+    }
+
+    public CrazyAirResponse generateCrazyAirResponse() {
         CrazyAirResponse crazyAirResponse = new CrazyAirResponse();
         crazyAirResponse.setAirline("LATAM");
         crazyAirResponse.setArrivalDate("2020-02-18T01:00:00+01:00");
@@ -47,13 +100,7 @@ public class CrazyAirServiceTest {
         crazyAirResponse.setDestinationAirportCode("LCY");
         crazyAirResponse.setPrice(120);
 
-        BusyFlightsResponse response = crazyAirService.map(crazyAirResponse);
-        assertEquals(response.getArrivalDate(), "2020-02-18T01:00:00+01:00");
-        assertEquals(response.getDepartureDate(), "2020-02-19T01:00:00+01:00");
-        assertEquals(response.getFare().intValue(), 120);
-        assertEquals(response.getDepartureAirportCode(), "GIG");
-        assertEquals(response.getDestinationAirportCode(), "LCY");
-        assertEquals(response.getSupplier(), SuplierEnum.CrazyAir.name());
+        return crazyAirResponse;
     }
 
 }

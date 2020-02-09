@@ -14,6 +14,8 @@ public interface FlightSupplier <SREQ, SRESP> {
 
     BusyFlightsResponse map(SRESP supplierResponse);
 
+    String buildUri(SREQ supplierRequest);
+
     default List<BusyFlightsResponse> search(BusyFlightsRequest flightsRequest) {
         return this.supplierSearch(this.map(flightsRequest)).stream().map(this::map).collect(toList());
     }

@@ -18,14 +18,14 @@ import java.util.List;
 @Service
 public class CrazyAirService implements FlightSupplier <CrazyAirRequest, CrazyAirResponse> {
 
-    @Value("${crazyair.server}")
     private String crazyAirServer;
 
     private RestTemplate restTemplate;
 
     @Autowired
-    public CrazyAirService(RestTemplate restTemplate) {
+    public CrazyAirService(RestTemplate restTemplate,  @Value("${crazyair.server}") String crazyAirServer) {
         this.restTemplate = restTemplate;
+        this.crazyAirServer = crazyAirServer;
     }
 
     @Override
@@ -61,7 +61,8 @@ public class CrazyAirService implements FlightSupplier <CrazyAirRequest, CrazyAi
         return busyFlightsResponse;
     }
 
-    private String buildUri(CrazyAirRequest crazyAirRequest){
+    @Override
+    public String buildUri(CrazyAirRequest crazyAirRequest){
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(crazyAirServer);
         builder.queryParam("origin",crazyAirRequest.getOrigin());
         builder.queryParam("destination",crazyAirRequest.getDestination());

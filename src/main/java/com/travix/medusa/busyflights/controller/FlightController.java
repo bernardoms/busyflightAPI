@@ -23,7 +23,6 @@ public class FlightController {
 
     @GetMapping
     public ResponseEntity<?> searchFlights(@Valid BusyFlightsRequest busyFlightsRequest){
-        flightService.search(busyFlightsRequest);
         return ResponseEntity.ok(flightService.search(busyFlightsRequest));
     }
 }
