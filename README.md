@@ -5,7 +5,9 @@
 There is two options to run local.
 
 - First Option : go to deps folder then docker-compose up -d
-- Second Option: go to src/test/resources/wiremock then java -jar wiremock-standalone-2.26.0.jar --port=3002
+- Second Option: 
+download the wiremock jar from here http://wiremock.org/docs/running-standalone/ and extract
+to src/test/resources/wiremock then java -jar wiremock-standalone-2.26.0.jar --port=3002
 
 **Background:**
 
