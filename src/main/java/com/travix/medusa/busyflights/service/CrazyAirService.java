@@ -5,19 +5,32 @@ import com.travix.medusa.busyflights.domain.busyflights.BusyFlightsRequest;
 import com.travix.medusa.busyflights.domain.busyflights.BusyFlightsResponse;
 import com.travix.medusa.busyflights.domain.crazyair.CrazyAirRequest;
 import com.travix.medusa.busyflights.domain.crazyair.CrazyAirResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.math.BigDecimal;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CrazyAirService implements FlightSupplier <CrazyAirRequest, CrazyAirResponse> {
 
+    @Value("${crazyair.server}")
+    private String crazyAirServer;
+
+    private RestTemplate restTemplate;
+
+    @Autowired
+    public CrazyAirService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
     @Override
-    public Optional<List<CrazyAirResponse>> supplierSearch(CrazyAirRequest supplierRequest) {
-        return Optional.of(Collections.singletonList(new CrazyAirResponse()));
+    public List<CrazyAirResponse> supplierSearch(CrazyAirRequest supplierRequest) {
+        return Arrays.asList(restTemplate.getForObject(buildUri(supplierRequest), CrazyAirResponse[].class));
     }
 
     @Override
@@ -46,5 +59,15 @@ public class CrazyAirService implements FlightSupplier <CrazyAirRequest, CrazyAi
         busyFlightsResponse.setSupplier(SuplierEnum.CrazyAir.name());
 
         return busyFlightsResponse;
+    }
+
+    private String buildUri(CrazyAirRequest crazyAirRequest){
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(crazyAirServer);
+        builder.queryParam("origin",crazyAirRequest.getOrigin());
+        builder.queryParam("destination",crazyAirRequest.getDestination());
+        builder.queryParam("departureDate",crazyAirRequest.getDepartureDate());
+        builder.queryParam("returnDate",crazyAirRequest.getReturnDate());
+        builder.queryParam("passengerCount",crazyAirRequest.getPassengerCount());
+        return builder.toUriString();
     }
 }

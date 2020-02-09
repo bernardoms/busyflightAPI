@@ -1,0 +1,10 @@
+version: '2.1'
+
+services:
+  wiremock:
+      image: ekino/wiremock
+      ports:
+        - "3002:8080"
+      volumes:
+       - ../src/test/resources/wiremock/__files:/wiremock/__files
+       - ../src/test/resources/wiremock/mappings:/wiremock/mappings

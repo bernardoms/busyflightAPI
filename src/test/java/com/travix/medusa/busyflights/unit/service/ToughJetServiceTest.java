@@ -7,11 +7,17 @@ import com.travix.medusa.busyflights.domain.toughjet.ToughJetRequest;
 import com.travix.medusa.busyflights.domain.toughjet.ToughJetResponse;
 import com.travix.medusa.busyflights.service.ToughJetService;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ToughJetServiceTest {
-    private ToughJetService toughJetService = new ToughJetService();
+
+    @InjectMocks
+    private ToughJetService toughJetService;
 
     @Test
     public void mapToCrazyAirRequest() {

@@ -1,0 +1,14 @@
+{
+    "request": {
+        "method": "GET",
+	    "urlPathPattern": "/crazyAir/flights\\?*"
+
+	},
+    "response": {
+		"status": 200,
+		"bodyFileName": "crazyAirResponse.json",
+		"headers": {
+			"Content-Type": "application/json; charset=utf-8"
+        }
+    }
+}

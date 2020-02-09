@@ -1,5 +1,12 @@
 **Travix - Problem to be solved**
 
+**How To Run:**
+
+There is two options to run local.
+
+- First Option : go to deps folder then docker-compose up -d
+- Second Option: go to src/test/resources/wiremock then java -jar wiremock-standalone-2.26.0.jar --port=3002
+
 **Background:**
 
 BusyFlights is a flights search solution which aggregates flight results initially from 2 different suppliers (CrazyAir and ToughJet). A future iteration (not part of the test) may add more suppliers.

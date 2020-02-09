@@ -1,0 +1,20 @@
+[
+  {
+    "airline" : "GOL",
+    "price" : 50,
+    "cabinclass" : "B",
+    "departureAirportCode" : "GIG",
+    "destinationAirportCode" : "LOL",
+    "departureDate" : "2020-02-18T01:00:00+01:00",
+    "arrivalDate" : "2020-02-19T01:00:00+01:00"
+  },
+  {
+    "airline" : "LATAM",
+    "price" : 200,
+    "cabinclass" : "B",
+    "departureAirportCode" : "GIG",
+    "destinationAirportCode" : "LOL",
+    "departureDate" : "2020-02-18T01:00:00+01:00",
+    "arrivalDate" : "2020-02-19T01:00:00+01:00"
+  }
+]

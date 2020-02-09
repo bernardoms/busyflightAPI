@@ -6,15 +6,17 @@ import com.travix.medusa.busyflights.domain.busyflights.BusyFlightsResponse;
 import com.travix.medusa.busyflights.domain.crazyair.CrazyAirRequest;
 import com.travix.medusa.busyflights.domain.crazyair.CrazyAirResponse;
 import com.travix.medusa.busyflights.service.CrazyAirService;
-import com.travix.medusa.busyflights.service.FlightSupplier;
 import org.junit.Test;
-
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.runners.MockitoJUnitRunner;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
+@RunWith(MockitoJUnitRunner.class)
 public class CrazyAirServiceTest {
 
-    private CrazyAirService crazyAirService = new CrazyAirService();
+    @InjectMocks
+    private CrazyAirService crazyAirService;
 
     @Test
     public void mapToCrazyAirRequest() {

@@ -1,0 +1,22 @@
+[
+  {
+    "carrier" : "AmericanAirLines",
+    "basePrice" : 500,
+    "tax" : 10,
+    "discount" : 0,
+    "departureAirportName" : "LOL",
+	"arrivalAirportName" : "GIG",
+    "outboundDateTime" : "2020-02-18T01:00:00+01:00",
+    "inboundDateTime" : "2020-02-19T01:00:00+01:00"
+  },
+  {
+    "carrier" : "Delta",
+    "basePrice" : 1000,
+    "tax" : 10,
+    "discount" : 10,
+    "departureAirportName" : "LOL",
+	"arrivalAirportName" : "GIG",
+    "outboundDateTime" : "2020-02-18T01:00:00+01:00",
+    "inboundDateTime" : "2020-02-19T01:00:00+01:00"
+  }
+]

@@ -5,21 +5,34 @@ import com.travix.medusa.busyflights.domain.busyflights.BusyFlightsRequest;
 import com.travix.medusa.busyflights.domain.busyflights.BusyFlightsResponse;
 import com.travix.medusa.busyflights.domain.toughjet.ToughJetRequest;
 import com.travix.medusa.busyflights.domain.toughjet.ToughJetResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ToughJetService implements FlightSupplier<ToughJetRequest, ToughJetResponse> {
 
+    @Value("${toughJet.server}")
+    private String toughJetServer;
+
+    private RestTemplate restTemplate;
+
+    @Autowired
+    public ToughJetService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
     @Override
-    public Optional<List<ToughJetResponse>> supplierSearch(ToughJetRequest supplierRequest) {
-        return Optional.of(Collections.singletonList(new ToughJetResponse()));
+    public List<ToughJetResponse> supplierSearch(ToughJetRequest supplierRequest) {
+        return Arrays.asList(restTemplate.getForObject(buildUri(supplierRequest), ToughJetResponse[].class));
     }
 
     @Override
@@ -52,5 +65,15 @@ public class ToughJetService implements FlightSupplier<ToughJetRequest, ToughJet
         busyFlightsResponse.setSupplier(SuplierEnum.ToughJet.name());
 
         return busyFlightsResponse;
+    }
+
+    private String buildUri(ToughJetRequest toughJetRequest){
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(toughJetServer);
+        builder.queryParam("from",toughJetRequest.getFrom());
+        builder.queryParam("to",toughJetRequest.getTo());
+        builder.queryParam("outboundDate",toughJetRequest.getOutboundDate());
+        builder.queryParam("inboundDate",toughJetRequest.getInboundDate());
+        builder.queryParam("numberOfAdults",toughJetRequest.getNumberOfAdults());
+        return builder.toUriString();
     }
 }
